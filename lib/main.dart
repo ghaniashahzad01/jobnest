@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
+import 'features/auth/screens/welcome_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +16,7 @@ class JobNestApp extends StatelessWidget {
       title: 'JobNest',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
-      home: const JobNestHome(),
+      home: const WelcomeScreen(),
     );
   }
 }
