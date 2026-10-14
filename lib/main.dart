@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/screens/welcome_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 
 Future<void> main() async {
