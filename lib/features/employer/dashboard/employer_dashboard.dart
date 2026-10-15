@@ -38,7 +38,7 @@ class EmployerDashboard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               const Text(
-                'Manage your jobs and discover promising candidates.',
+                'Manage jobs and discover promising candidates.',
                 style: TextStyle(color: Color(0xFF9292A7)),
               ),
               const SizedBox(height: 26),
@@ -64,24 +64,16 @@ class EmployerDashboard extends StatelessWidget {
               const SizedBox(height: 22),
               Card(
                 child: ListTile(
-                  contentPadding: const EdgeInsets.all(18),
                   leading: const Icon(
                     Icons.add_circle_outline_rounded,
                     color: Color(0xFF9B6DFF),
-                    size: 32,
                   ),
-                  title: const Text(
-                    'Post a Job',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  subtitle: const Text(
-                    'Create a listing to start receiving applications.',
-                  ),
-                  trailing: const Icon(Icons.chevron_right_rounded),
+                  title: const Text('Post a Job'),
+                  subtitle: const Text('Create a new job listing.'),
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Job posting is our next feature.'),
+                        content: Text('Job posting will be implemented next.'),
                       ),
                     );
                   },
@@ -89,20 +81,12 @@ class EmployerDashboard extends StatelessWidget {
               ),
               Card(
                 child: ListTile(
-                  contentPadding: const EdgeInsets.all(18),
                   leading: const Icon(
                     Icons.person_search_rounded,
                     color: Color(0xFF36D6C3),
-                    size: 32,
                   ),
-                  title: const Text(
-                    'Manage Applicants',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  subtitle: const Text(
-                    'Review candidates and their skills.',
-                  ),
-                  trailing: const Icon(Icons.chevron_right_rounded),
+                  title: const Text('Manage Applicants'),
+                  subtitle: const Text('Review potential candidates.'),
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
