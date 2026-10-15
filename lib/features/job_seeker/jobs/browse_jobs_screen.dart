@@ -1,6 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'job_details_screen.dart';
 
 class BrowseJobsScreen extends StatefulWidget {
   const BrowseJobsScreen({super.key});
@@ -135,26 +136,23 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
                   final title = job['title'] as String? ?? '';
                   final company = job['company_name'] as String? ?? '';
                   final location = job['location'] as String? ?? '';
-                  final skills = List<String>.from(
-                    job['required_skills'] ?? [],
-                  ).join(' ');
+                  final skills = List<String>.from(job['required_skills'] ?? [])
+                      .join(' ');
 
-                  final matchesWorkplace = selectedWorkplace == 'All' ||
+                  final matchesWorkplace =
+                      selectedWorkplace == 'All' ||
                       workplace == selectedWorkplace;
 
-                  final searchableText =
-                      '$title $company $location $skills'.toLowerCase();
+                  final searchableText = '$title $company $location $skills'
+                      .toLowerCase();
 
-                  return matchesWorkplace &&
-                      searchableText.contains(query);
+                  return matchesWorkplace && searchableText.contains(query);
                 }).toList();
 
                 if (filteredJobs.isEmpty) {
                   return _MessageView(
                     icon: Icons.work_outline_rounded,
-                    title: query.isEmpty
-                        ? 'No jobs found'
-                        : 'No matching jobs',
+                    title: query.isEmpty ? 'No jobs found' : 'No matching jobs',
                     subtitle: query.isEmpty
                         ? 'New opportunities will appear here when employers publish jobs.'
                         : 'Try another search or change the filter.',
@@ -187,11 +185,10 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
                         child: InkWell(
                           borderRadius: BorderRadius.circular(18),
                           onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Job Details will be implemented next.',
-                                ),
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => JobDetailsScreen(job: job),
                               ),
                             );
                           },
@@ -283,8 +280,9 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
                                         ),
                                         decoration: BoxDecoration(
                                           color: const Color(0xFF22202F),
-                                          borderRadius:
-                                              BorderRadius.circular(9),
+                                          borderRadius: BorderRadius.circular(
+                                            9,
+                                          ),
                                         ),
                                         child: Text(
                                           skill,
@@ -396,10 +394,7 @@ class _MessageView extends StatelessWidget {
         Center(
           child: Text(
             title,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-            ),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
           ),
         ),
         const SizedBox(height: 8),
