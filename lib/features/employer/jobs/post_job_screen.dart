@@ -142,7 +142,7 @@ class _PostJobScreenState extends State<PostJobScreen> {
                 TextFormField(
                   controller: companyController,
                   decoration: _decoration(
-                    'e.g. TechCorp',
+                    'e.g. NexAppra',
                     Icons.business_outlined,
                   ),
                   validator: (value) =>

@@ -1,5 +1,8 @@
 
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../jobs/browse_jobs_screen.dart';
 
 class JobSeekerDashboard extends StatelessWidget {
   const JobSeekerDashboard({super.key});
@@ -14,10 +17,12 @@ class JobSeekerDashboard extends StatelessWidget {
             tooltip: 'Log out',
             icon: const Icon(Icons.logout_rounded),
             onPressed: () async {
-              await Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (_) => const _LogoutScreen(),
-                ),
+              await Supabase.instance.client.auth.signOut();
+
+              if (!context.mounted) return;
+
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                '/',
                 (route) => false,
               );
             },
@@ -43,21 +48,34 @@ class JobSeekerDashboard extends StatelessWidget {
                 style: TextStyle(color: Color(0xFF9292A7)),
               ),
               const SizedBox(height: 26),
+
+              // Find Jobs: opens the Browse Jobs screen.
               _FeatureCard(
                 icon: Icons.work_outline_rounded,
                 title: 'Find Jobs',
                 subtitle: 'Explore opportunities for your career.',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const BrowseJobsScreen(),
+                    ),
+                  );
+                },
               ),
+
               _FeatureCard(
                 icon: Icons.auto_awesome_rounded,
                 title: 'Smart Matching',
                 subtitle: 'Discover jobs aligned with your skills.',
               ),
+
               _FeatureCard(
                 icon: Icons.trending_up_rounded,
                 title: 'Skill Gap Analysis',
                 subtitle: 'Identify skills to improve.',
               ),
+
               _FeatureCard(
                 icon: Icons.track_changes_rounded,
                 title: 'Application Tracker',
@@ -76,19 +94,26 @@ class _FeatureCard extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.subtitle,
+    this.onTap,
   });
 
   final IconData icon;
   final String title;
   final String subtitle;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 14),
       child: ListTile(
+        onTap: onTap,
         contentPadding: const EdgeInsets.all(16),
-        leading: Icon(icon, color: const Color(0xFF9B6DFF), size: 30),
+        leading: Icon(
+          icon,
+          color: const Color(0xFF9B6DFF),
+          size: 30,
+        ),
         title: Text(
           title,
           style: const TextStyle(fontWeight: FontWeight.w700),
@@ -98,19 +123,6 @@ class _FeatureCard extends StatelessWidget {
           child: Text(subtitle),
         ),
         trailing: const Icon(Icons.chevron_right_rounded),
-      ),
-    );
-  }
-}
-
-class _LogoutScreen extends StatelessWidget {
-  const _LogoutScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('Please reopen JobNest to log in again.'),
       ),
     );
   }
