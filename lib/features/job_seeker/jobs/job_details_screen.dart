@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'apply_job_screen.dart';
 
 class JobDetailsScreen extends StatefulWidget {
   const JobDetailsScreen({
@@ -59,45 +60,38 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   }
 
   Future<void> _applyForJob() async {
-    final user = Supabase.instance.client.auth.currentUser;
+  final user = Supabase.instance.client.auth.currentUser;
 
-    if (user == null) {
-      _showMessage('Please log in before applying.');
-      return;
-    }
+  if (user == null) {
+    _showMessage('Please log in before applying.');
+    return;
+  }
 
-    setState(() => isLoading = true);
+  setState(() => isLoading = true);
 
-    try {
-      await Supabase.instance.client.from('applications').insert({
-        'job_id': widget.job['id'],
-        'applicant_id': user.id,
-        'status': 'applied',
-      });
+  try {
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ApplyJobScreen(job: widget.job),
+      ),
+    );
 
-      if (!mounted) return;
+    if (!mounted) return;
 
+    if (result == true) {
       setState(() => hasApplied = true);
-      _showMessage('Application submitted successfully!');
-    } on PostgrestException catch (error) {
-      if (!mounted) return;
-
-      if (error.code == '23505') {
-        setState(() => hasApplied = true);
-        _showMessage('You have already applied for this job.');
-      } else {
-        _showMessage('Could not apply: ${error.message}');
-      }
-    } catch (error) {
-      if (!mounted) return;
-      _showMessage('Something went wrong. Please try again.');
-      debugPrint('Apply error: $error');
-    } finally {
-      if (mounted) {
-        setState(() => isLoading = false);
-      }
+    }
+  } catch (error) {
+    if (!mounted) return;
+    _showMessage('Could not open application form.');
+    debugPrint('Open application form error: $error');
+  } finally {
+    if (mounted) {
+      setState(() => isLoading = false);
     }
   }
+}
 
   void _showMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
