@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../jobs/post_job_screen.dart';
+import '../jobs/my_jobs_screen.dart';
+
 class EmployerDashboard extends StatelessWidget {
   const EmployerDashboard({super.key});
 
@@ -31,10 +34,7 @@ class EmployerDashboard extends StatelessWidget {
             children: [
               const Text(
                 'Hire the right talent.',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                ),
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
               ),
               const SizedBox(height: 8),
               const Text(
@@ -70,12 +70,19 @@ class EmployerDashboard extends StatelessWidget {
                   ),
                   title: const Text('Post a Job'),
                   subtitle: const Text('Create a new job listing.'),
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Job posting will be implemented next.'),
-                      ),
+                  onTap: () async {
+                    final result = await Navigator.push<bool>(
+                      context,
+                      MaterialPageRoute(builder: (_) => const PostJobScreen()),
                     );
+
+                    if (result == true && context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Your job has been published.'),
+                        ),
+                      );
+                    }
                   },
                 ),
               ),
@@ -92,6 +99,24 @@ class EmployerDashboard extends StatelessWidget {
                       const SnackBar(
                         content: Text('Applicant management is coming next.'),
                       ),
+                    );
+                  },
+                ),
+              ),
+              Card(
+                child: ListTile(
+                  contentPadding: const EdgeInsets.all(18),
+                  leading: const Icon(
+                    Icons.list_alt_rounded,
+                    color: Color(0xFF36D6C3),
+                  ),
+                  title: const Text('My Jobs'),
+                  subtitle: const Text('View jobs published by your company.'),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const MyJobsScreen()),
                     );
                   },
                 ),
@@ -127,16 +152,10 @@ class _StatCard extends StatelessWidget {
             const SizedBox(height: 18),
             Text(
               value,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w800,
-              ),
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 4),
-            Text(
-              title,
-              style: const TextStyle(color: Color(0xFF9292A7)),
-            ),
+            Text(title, style: const TextStyle(color: Color(0xFF9292A7))),
           ],
         ),
       ),

@@ -23,6 +23,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool obscurePassword = true;
   bool isLoading = false;
+  late String selectedRole;
+
+@override
+void initState() {
+  super.initState();
+  selectedRole = widget.role;
+}
 
   @override
   void dispose() {
@@ -67,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final actualRole = profile['role'] as String?;
 
-      if (actualRole != widget.role) {
+      if (actualRole != selectedRole) {
         await supabase.auth.signOut();
 
         if (!mounted) return;
@@ -117,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isEmployer = widget.role == 'employer';
+    final isEmployer =  selectedRole == 'employer';
 
     return Scaffold(
       appBar: AppBar(),
@@ -135,6 +142,41 @@ class _LoginScreenState extends State<LoginScreen> {
                       ? 'Sign in to manage your company and applicants.'
                       : 'Sign in to continue your career journey.',
                 ),
+              
+const SizedBox(height: 28),
+Container(
+  padding: const EdgeInsets.all(5),
+  decoration: BoxDecoration(
+    color: const Color(0xFF151520),
+    borderRadius: BorderRadius.circular(16),
+    border: Border.all(color: const Color(0xFF292938)),
+  ),
+  child: Row(
+    children: [
+      Expanded(
+        child: _RoleButton(
+          title: 'Job Seeker',
+          selected: selectedRole == 'job_seeker',
+          onTap: () {
+            setState(() => selectedRole = 'job_seeker');
+          },
+        ),
+      ),
+      const SizedBox(width: 6),
+      Expanded(
+        child: _RoleButton(
+          title: 'Employer',
+          selected: selectedRole == 'employer',
+          onTap: () {
+            setState(() => selectedRole = 'employer');
+          },
+        ),
+      ),
+    ],
+  ),
+),
+const SizedBox(height: 28),
+
                 const SizedBox(height: 36),
                 const Text('Email address'),
                 const SizedBox(height: 8),
@@ -206,13 +248,57 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => SignupScreen(role: widget.role),
+                        builder: (_) => SignupScreen(role: selectedRole),
                       ),
                     ),
                     child: const Text("Don't have an account? Sign up"),
                   ),
                 ),
               ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+class _RoleButton extends StatelessWidget {
+  const _RoleButton({
+    required this.title,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String title;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      decoration: BoxDecoration(
+        color: selected
+            ? const Color(0xFF9B6DFF)
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          child: Center(
+            child: Text(
+              title,
+              style: TextStyle(
+                color: selected
+                    ? Colors.white
+                    : const Color(0xFF9292A7),
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ),
