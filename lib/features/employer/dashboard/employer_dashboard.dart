@@ -1,11 +1,101 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
+import '../../auth/screens/welcome_screen.dart';
 import '../jobs/post_job_screen.dart';
 import '../jobs/my_jobs_screen.dart';
 
-class EmployerDashboard extends StatelessWidget {
+class EmployerDashboard extends StatefulWidget {
   const EmployerDashboard({super.key});
+
+  @override
+  State<EmployerDashboard> createState() => _EmployerDashboardState();
+}
+
+class _EmployerDashboardState extends State<EmployerDashboard> {
+  late Future<Map<String, int>> statsFuture;
+  bool isLoggingOut = false;
+
+  @override
+  void initState() {
+    super.initState();
+    statsFuture = _loadStats();
+  }
+
+  Future<Map<String, int>> _loadStats() async {
+    final client = Supabase.instance.client;
+    final user = client.auth.currentUser;
+
+    if (user == null) {
+      throw Exception('Please log in again.');
+    }
+
+    // Load jobs belonging to the logged-in employer.
+    final response = await client
+        .from('jobs')
+        .select('id, status')
+        .eq('employer_id', user.id);
+
+    final jobs = List<Map<String, dynamic>>.from(response);
+
+    final activeJobs = jobs.where((job) => job['status'] == 'active').length;
+
+    // Count applications submitted for these jobs.
+    var applicants = 0;
+
+    for (final job in jobs) {
+      final result = await client
+          .from('applications')
+          .select('id')
+          .eq('job_id', job['id']);
+
+      applicants += (result as List).length;
+    }
+
+    return {'activeJobs': activeJobs, 'applicants': applicants};
+  }
+
+  Future<void> _refreshStats() async {
+    final future = _loadStats();
+
+    setState(() {
+      statsFuture = future;
+    });
+
+    try {
+      await future;
+    } catch (_) {
+      // The FutureBuilder below displays the error.
+    }
+  }
+
+  
+
+Future<void> _logout() async {
+  if (isLoggingOut) return;
+
+  setState(() => isLoggingOut = true);
+
+  try {
+    await Supabase.instance.client.auth.signOut();
+
+    if (!mounted) return;
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (_) => const WelcomeScreen(),
+      ),
+      (route) => false,
+    );
+  } catch (error) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Logout failed: $error')),
+    );
+
+    setState(() => isLoggingOut = false);
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -14,23 +104,28 @@ class EmployerDashboard extends StatelessWidget {
         title: const Text('Employer Portal'),
         actions: [
           IconButton(
+            tooltip: 'Refresh dashboard',
+            onPressed: _refreshStats,
+            icon: const Icon(Icons.refresh_rounded),
+          ),
+          IconButton(
             tooltip: 'Log out',
-            icon: const Icon(Icons.logout_rounded),
-            onPressed: () async {
-              await Supabase.instance.client.auth.signOut();
-
-              if (!context.mounted) return;
-
-              Navigator.of(context).popUntil((route) => route.isFirst);
-            },
+            onPressed: isLoggingOut ? null : _logout,
+            icon: isLoggingOut
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.logout_rounded),
           ),
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(22),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: RefreshIndicator(
+          onRefresh: _refreshStats,
+          child: ListView(
+            padding: const EdgeInsets.all(22),
             children: [
               const Text(
                 'Hire the right talent.',
@@ -42,26 +137,70 @@ class EmployerDashboard extends StatelessWidget {
                 style: TextStyle(color: Color(0xFF9292A7)),
               ),
               const SizedBox(height: 26),
-              const Row(
-                children: [
-                  Expanded(
-                    child: _StatCard(
-                      icon: Icons.work_outline_rounded,
-                      title: 'Active Jobs',
-                      value: '0',
-                    ),
-                  ),
-                  SizedBox(width: 14),
-                  Expanded(
-                    child: _StatCard(
-                      icon: Icons.people_outline_rounded,
-                      title: 'Applicants',
-                      value: '0',
-                    ),
-                  ),
-                ],
+
+              // Live database statistics.
+              FutureBuilder<Map<String, int>>(
+                future: statsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Could not load dashboard statistics.'),
+                            const SizedBox(height: 8),
+                            Text(
+                              '${snapshot.error}',
+                              style: const TextStyle(
+                                color: Color(0xFF9292A7),
+                                fontSize: 12,
+                              ),
+                            ),
+                            TextButton.icon(
+                              onPressed: _refreshStats,
+                              icon: const Icon(Icons.refresh_rounded),
+                              label: const Text('Try again'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+
+                  final stats = snapshot.data;
+
+                  return Column(
+                    children: [
+                      if (snapshot.connectionState == ConnectionState.waiting)
+                        const LinearProgressIndicator(),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _StatCard(
+                              icon: Icons.work_outline_rounded,
+                              title: 'Active Jobs',
+                              value: stats?['activeJobs']?.toString() ?? '—',
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: _StatCard(
+                              icon: Icons.people_outline_rounded,
+                              title: 'Applicants',
+                              value: stats?['applicants']?.toString() ?? '—',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
               ),
+
               const SizedBox(height: 22),
+
               Card(
                 child: ListTile(
                   leading: const Icon(
@@ -70,13 +209,20 @@ class EmployerDashboard extends StatelessWidget {
                   ),
                   title: const Text('Post a Job'),
                   subtitle: const Text('Create a new job listing.'),
+                  trailing: const Icon(Icons.chevron_right_rounded),
                   onTap: () async {
                     final result = await Navigator.push<bool>(
                       context,
                       MaterialPageRoute(builder: (_) => const PostJobScreen()),
                     );
 
-                    if (result == true && context.mounted) {
+                    if (!mounted) return;
+
+                    if (result == true) {
+                      await _refreshStats();
+
+                      if (!mounted) return;
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Your job has been published.'),
@@ -86,6 +232,7 @@ class EmployerDashboard extends StatelessWidget {
                   },
                 ),
               ),
+
               Card(
                 child: ListTile(
                   leading: const Icon(
@@ -94,15 +241,16 @@ class EmployerDashboard extends StatelessWidget {
                   ),
                   title: const Text('Manage Applicants'),
                   subtitle: const Text('Review potential candidates.'),
+                  trailing: const Icon(Icons.chevron_right_rounded),
                   onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Applicant management is coming next.'),
-                      ),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const MyJobsScreen()),
                     );
                   },
                 ),
               ),
+
               Card(
                 child: ListTile(
                   contentPadding: const EdgeInsets.all(18),
@@ -113,11 +261,14 @@ class EmployerDashboard extends StatelessWidget {
                   title: const Text('My Jobs'),
                   subtitle: const Text('View jobs published by your company.'),
                   trailing: const Icon(Icons.chevron_right_rounded),
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const MyJobsScreen()),
                     );
+
+                    if (!mounted) return;
+                    await _refreshStats();
                   },
                 ),
               ),

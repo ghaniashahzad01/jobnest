@@ -1,7 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../matching/smart_job_matching_screen.dart';
+import '../applications/application_tracker_screen.dart';
 import '../jobs/browse_jobs_screen.dart';
 
 class JobSeekerDashboard extends StatelessWidget {
@@ -21,10 +22,8 @@ class JobSeekerDashboard extends StatelessWidget {
 
               if (!context.mounted) return;
 
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                '/',
-                (route) => false,
-              );
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil('/', (route) => false);
             },
           ),
         ],
@@ -37,10 +36,7 @@ class JobSeekerDashboard extends StatelessWidget {
             children: [
               const Text(
                 'Your next opportunity.',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                ),
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
               ),
               const SizedBox(height: 8),
               const Text(
@@ -57,9 +53,7 @@ class JobSeekerDashboard extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (_) => const BrowseJobsScreen(),
-                    ),
+                    MaterialPageRoute(builder: (_) => const BrowseJobsScreen()),
                   );
                 },
               ),
@@ -68,6 +62,14 @@ class JobSeekerDashboard extends StatelessWidget {
                 icon: Icons.auto_awesome_rounded,
                 title: 'Smart Matching',
                 subtitle: 'Discover jobs aligned with your skills.',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const SmartJobMatchingScreen(),
+                    ),
+                  );
+                },
               ),
 
               _FeatureCard(
@@ -80,6 +82,14 @@ class JobSeekerDashboard extends StatelessWidget {
                 icon: Icons.track_changes_rounded,
                 title: 'Application Tracker',
                 subtitle: 'Keep track of your applications.',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const ApplicationTrackerScreen(),
+                    ),
+                  );
+                },
               ),
             ],
           ),
@@ -109,15 +119,8 @@ class _FeatureCard extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         contentPadding: const EdgeInsets.all(16),
-        leading: Icon(
-          icon,
-          color: const Color(0xFF9B6DFF),
-          size: 30,
-        ),
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w700),
-        ),
+        leading: Icon(icon, color: const Color(0xFF9B6DFF), size: 30),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 6),
           child: Text(subtitle),

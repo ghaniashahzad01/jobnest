@@ -1,6 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'job_applicants_screen.dart';
 
 class MyJobsScreen extends StatefulWidget {
   const MyJobsScreen({super.key});
@@ -19,20 +20,25 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
   }
 
   Future<List<Map<String, dynamic>>> _loadJobs() async {
-    final user = Supabase.instance.client.auth.currentUser;
+  final client = Supabase.instance.client;
+  final session = client.auth.currentSession;
+  final user = client.auth.currentUser;
 
-    if (user == null) {
-      throw Exception('Please log in again.');
-    }
+  debugPrint('Current session exists: ${session != null}');
+  debugPrint('Current user ID: ${user?.id}');
 
-    final response = await Supabase.instance.client
-        .from('jobs')
-        .select()
-        .eq('employer_id', user.id)
-        .order('created_at', ascending: false);
-
-    return List<Map<String, dynamic>>.from(response);
+  if (user == null) {
+    throw Exception('Please log in again.');
   }
+
+  final response = await client
+      .from('jobs')
+      .select()
+      .eq('employer_id', user.id)
+      .order('created_at', ascending: false);
+
+  return List<Map<String, dynamic>>.from(response);
+}
 
   Future<void> _refresh() async {
     final future = _loadJobs();
@@ -97,9 +103,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
               itemCount: jobs.length,
               itemBuilder: (context, index) {
                 final job = jobs[index];
-                final skills = List<String>.from(
-                  job['required_skills'] ?? [],
-                );
+                final skills = List<String>.from(job['required_skills'] ?? []);
 
                 return Card(
                   margin: const EdgeInsets.only(bottom: 14),
@@ -120,9 +124,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                         const SizedBox(height: 10),
                         Text(
                           '${job['location']} • ${job['workplace_type']}',
-                          style: const TextStyle(
-                            color: Color(0xFF9292A7),
-                          ),
+                          style: const TextStyle(color: Color(0xFF9292A7)),
                         ),
                         const SizedBox(height: 10),
                         Text(
@@ -132,11 +134,24 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                           style: const TextStyle(fontSize: 12),
                         ),
                         const SizedBox(height: 12),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Chip(
-                            label: Text(job['status'] ?? 'active'),
-                          ),
+                        Row(
+                          children: [
+                            Chip(label: Text(job['status'] ?? 'active')),
+                            const Spacer(),
+                            TextButton.icon(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        JobApplicantsScreen(job: job),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.people_outline_rounded),
+                              label: const Text('View Applicants'),
+                            ),
+                          ],
                         ),
                       ],
                     ),
