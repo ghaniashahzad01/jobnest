@@ -1,4 +1,6 @@
+
 import 'package:flutter/material.dart';
+
 import 'role_selection_screen.dart';
 import 'login_screen.dart';
 import '../widgets/auth_header.dart';
@@ -8,6 +10,10 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -22,39 +28,50 @@ class WelcomeScreen extends StatelessWidget {
                     'Discover opportunities, match your skills, and build your career with JobNest.',
               ),
               const SizedBox(height: 38),
+
+              // Theme-aware feature card
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(22),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF151520),
+                  color: theme.cardTheme.color ?? colors.surface,
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: const Color(0xFF292938)),
+                  border: Border.all(
+                    color: theme.dividerColor,
+                  ),
                 ),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.auto_awesome_rounded,
-                        color: Color(0xFF9B6DFF), size: 28),
-                    SizedBox(height: 14),
+                    const Icon(
+                      Icons.auto_awesome_rounded,
+                      color: Color(0xFF9B6DFF),
+                      size: 28,
+                    ),
+                    const SizedBox(height: 14),
                     Text(
                       'A smarter way to find your fit.',
-                      style: TextStyle(
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontSize: 19,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       'Personalized jobs. Skill insights. Applications in one place.',
-                      style: TextStyle(
-                        color: Color(0xFF9292A7),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: isDark
+                            ? const Color(0xFF9292A7)
+                            : const Color(0xFF77758A),
                         height: 1.5,
                       ),
                     ),
                   ],
                 ),
               ),
+
               const Spacer(),
+
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -68,19 +85,24 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 14),
+
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const LoginScreen(role: 'job_seeker'),
+                      builder: (_) => const LoginScreen(
+                        role: 'job_seeker',
+                      ),
                     ),
                   ),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 54),
-                    foregroundColor: Colors.white,
-                    side: const BorderSide(color: Color(0xFF292938)),
+                    foregroundColor: colors.primary,
+                    side: BorderSide(
+                      color: theme.dividerColor,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -88,12 +110,15 @@ class WelcomeScreen extends StatelessWidget {
                   child: const Text('I already have an account'),
                 ),
               ),
+
               const SizedBox(height: 16),
-              const Center(
+              Center(
                 child: Text(
                   'FIND. MATCH. IMPROVE. TRACK.',
-                  style: TextStyle(
-                    color: Color(0xFF9292A7),
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: isDark
+                        ? const Color(0xFF9292A7)
+                        : const Color(0xFF77758A),
                     fontSize: 10,
                     letterSpacing: 2,
                   ),

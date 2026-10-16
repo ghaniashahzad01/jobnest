@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'forgot_password_screen.dart';
 import '../widgets/auth_header.dart';
 import 'signup_screen.dart';
 import '../../job_seeker/dashboard/job_seeker_dashboard.dart';
@@ -25,11 +25,11 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
   late String selectedRole;
 
-@override
-void initState() {
-  super.initState();
-  selectedRole = widget.role;
-}
+  @override
+  void initState() {
+    super.initState();
+    selectedRole = widget.role;
+  }
 
   @override
   void dispose() {
@@ -102,9 +102,8 @@ void initState() {
     } on AuthException catch (error) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error.message)),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error.message)));
     } catch (error) {
       if (!mounted) return;
 
@@ -124,7 +123,7 @@ void initState() {
 
   @override
   Widget build(BuildContext context) {
-    final isEmployer =  selectedRole == 'employer';
+    final isEmployer = selectedRole == 'employer';
 
     return Scaffold(
       appBar: AppBar(),
@@ -142,40 +141,40 @@ void initState() {
                       ? 'Sign in to manage your company and applicants.'
                       : 'Sign in to continue your career journey.',
                 ),
-              
-const SizedBox(height: 28),
-Container(
-  padding: const EdgeInsets.all(5),
-  decoration: BoxDecoration(
-    color: const Color(0xFF151520),
-    borderRadius: BorderRadius.circular(16),
-    border: Border.all(color: const Color(0xFF292938)),
-  ),
-  child: Row(
-    children: [
-      Expanded(
-        child: _RoleButton(
-          title: 'Job Seeker',
-          selected: selectedRole == 'job_seeker',
-          onTap: () {
-            setState(() => selectedRole = 'job_seeker');
-          },
-        ),
-      ),
-      const SizedBox(width: 6),
-      Expanded(
-        child: _RoleButton(
-          title: 'Employer',
-          selected: selectedRole == 'employer',
-          onTap: () {
-            setState(() => selectedRole = 'employer');
-          },
-        ),
-      ),
-    ],
-  ),
-),
-const SizedBox(height: 28),
+
+                const SizedBox(height: 28),
+                Container(
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF151520),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFF292938)),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _RoleButton(
+                          title: 'Job Seeker',
+                          selected: selectedRole == 'job_seeker',
+                          onTap: () {
+                            setState(() => selectedRole = 'job_seeker');
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: _RoleButton(
+                          title: 'Employer',
+                          selected: selectedRole == 'employer',
+                          onTap: () {
+                            setState(() => selectedRole = 'employer');
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 28),
 
                 const SizedBox(height: 36),
                 const Text('Email address'),
@@ -225,6 +224,20 @@ const SizedBox(height: 28),
                     return null;
                   },
                 ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const ForgotPasswordScreen(),
+                        ),
+                      );
+                    },
+                    child: const Text('Forgot Password?'),
+                  ),
+                ),
                 const SizedBox(height: 28),
                 SizedBox(
                   width: double.infinity,
@@ -263,7 +276,6 @@ const SizedBox(height: 28),
   }
 }
 
-
 class _RoleButton extends StatelessWidget {
   const _RoleButton({
     required this.title,
@@ -280,9 +292,7 @@ class _RoleButton extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 180),
       decoration: BoxDecoration(
-        color: selected
-            ? const Color(0xFF9B6DFF)
-            : Colors.transparent,
+        color: selected ? const Color(0xFF9B6DFF) : Colors.transparent,
         borderRadius: BorderRadius.circular(12),
       ),
       child: InkWell(
@@ -294,9 +304,7 @@ class _RoleButton extends StatelessWidget {
             child: Text(
               title,
               style: TextStyle(
-                color: selected
-                    ? Colors.white
-                    : const Color(0xFF9292A7),
+                color: selected ? Colors.white : const Color(0xFF9292A7),
                 fontWeight: FontWeight.w700,
               ),
             ),
