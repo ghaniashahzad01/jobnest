@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../applicants/manage_applicants_screen.dart';
 import '../company_profile/company_profile_screen.dart';
 import '../../auth/screens/welcome_screen.dart';
 import '../jobs/post_job_screen.dart';
@@ -266,7 +267,9 @@ class _EmployerDashboardState extends State<EmployerDashboard> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const MyJobsScreen()),
+                      MaterialPageRoute(
+                        builder: (_) => const ManageApplicantsScreen(),
+                      ),
                     );
                   },
                 ),
