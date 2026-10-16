@@ -11,63 +11,106 @@ class AppTheme {
   static const Color accent = Color(0xFF36D6C3);
   static const Color mutedText = Color(0xFF9292A7);
 
+  static const Color lightBackground = Color(0xFFF7F7FC);
+  static const Color lightSurface = Color(0xFFFFFFFF);
+  static const Color lightPrimary = Color(0xFF7950D9);
+  static const Color lightBorder = Color(0xFFE5E3EF);
+  static const Color lightText = Color(0xFF242236);
+
   static ThemeData get darkTheme {
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: primary,
+    return _buildTheme(
       brightness: Brightness.dark,
-      surface: surface,
+      backgroundColor: background,
+      surfaceColor: surface,
+      primaryColor: primary,
+      textColor: Colors.white,
+      mutedColor: mutedText,
+      borderColor: const Color(0xFF292938),
+    );
+  }
+
+  static ThemeData get lightTheme {
+    return _buildTheme(
+      brightness: Brightness.light,
+      backgroundColor: lightBackground,
+      surfaceColor: lightSurface,
+      primaryColor: lightPrimary,
+      textColor: lightText,
+      mutedColor: const Color(0xFF77758A),
+      borderColor: lightBorder,
+    );
+  }
+
+  static ThemeData _buildTheme({
+    required Brightness brightness,
+    required Color backgroundColor,
+    required Color surfaceColor,
+    required Color primaryColor,
+    required Color textColor,
+    required Color mutedColor,
+    required Color borderColor,
+  }) {
+    final isDark = brightness == Brightness.dark;
+
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: primaryColor,
+      brightness: brightness,
+      surface: surfaceColor,
+    ).copyWith(
+      primary: primaryColor,
+      secondary: accent,
+      surface: surfaceColor,
     );
 
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
-      colorScheme: colorScheme.copyWith(
-        primary: primary,
-        secondary: accent,
-        surface: surface,
-      ),
-      scaffoldBackgroundColor: background,
+      brightness: brightness,
+      colorScheme: colorScheme,
+      scaffoldBackgroundColor: backgroundColor,
       fontFamily: 'Roboto',
-      appBarTheme: const AppBarTheme(
-        backgroundColor: background,
-        foregroundColor: Colors.white,
+      appBarTheme: AppBarTheme(
+        backgroundColor: backgroundColor,
+        foregroundColor: textColor,
         elevation: 0,
         centerTitle: false,
+        surfaceTintColor: Colors.transparent,
       ),
       cardTheme: CardThemeData(
-        color: surface,
+        color: surfaceColor,
         elevation: 0,
+        surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(
-            color: Color(0xFF292938),
-          ),
+          side: BorderSide(color: borderColor),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: surface,
-        hintStyle: const TextStyle(color: mutedText),
+        fillColor: surfaceColor,
+        hintStyle: TextStyle(color: mutedColor),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 18,
           vertical: 17,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Color(0xFF292938)),
+          borderSide: BorderSide(color: borderColor),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Color(0xFF292938)),
+          borderSide: BorderSide(color: borderColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: primary, width: 1.5),
+          borderSide: BorderSide(
+            color: primaryColor,
+            width: 1.5,
+          ),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: primary,
+          backgroundColor: primaryColor,
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 54),
           elevation: 0,
@@ -79,6 +122,16 @@ class AppTheme {
             fontWeight: FontWeight.w700,
           ),
         ),
+      ),
+      textTheme: ThemeData(
+        brightness: brightness,
+      ).textTheme.apply(
+        bodyColor: textColor,
+        displayColor: textColor,
+      ),
+      dividerColor: borderColor,
+      iconTheme: IconThemeData(
+        color: isDark ? Colors.white70 : mutedColor,
       ),
     );
   }
