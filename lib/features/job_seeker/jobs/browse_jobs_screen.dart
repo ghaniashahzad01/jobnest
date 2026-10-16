@@ -15,9 +15,10 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
   final searchController = TextEditingController();
 
   String selectedWorkplace = 'All';
+  String selectedJobType = 'All';
   final Set<String> savedJobIds = {};
   late Future<List<Map<String, dynamic>>> jobsFuture;
-  
+
   @override
   void initState() {
     super.initState();
@@ -173,24 +174,24 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
               children: [
                 _FilterChip(
-                  label: 'All',
-                  selected: selectedWorkplace == 'All',
-                  onTap: () => setState(() => selectedWorkplace = 'All'),
+                  label: 'Full-time',
+                  selected: selectedJobType == 'Full-time',
+                  onTap: () => setState(() => selectedJobType = 'Full-time'),
                 ),
                 _FilterChip(
-                  label: 'Remote',
-                  selected: selectedWorkplace == 'Remote',
-                  onTap: () => setState(() => selectedWorkplace = 'Remote'),
+                  label: 'Part-time',
+                  selected: selectedJobType == 'Part-time',
+                  onTap: () => setState(() => selectedJobType = 'Part-time'),
                 ),
                 _FilterChip(
-                  label: 'Hybrid',
-                  selected: selectedWorkplace == 'Hybrid',
-                  onTap: () => setState(() => selectedWorkplace = 'Hybrid'),
+                  label: 'Internship',
+                  selected: selectedJobType == 'Internship',
+                  onTap: () => setState(() => selectedJobType = 'Internship'),
                 ),
                 _FilterChip(
-                  label: 'On-site',
-                  selected: selectedWorkplace == 'On-site',
-                  onTap: () => setState(() => selectedWorkplace = 'On-site'),
+                  label: 'Contract',
+                  selected: selectedJobType == 'Contract',
+                  onTap: () => setState(() => selectedJobType = 'Contract'),
                 ),
               ],
             ),
@@ -230,10 +231,16 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
                       selectedWorkplace == 'All' ||
                       workplace == selectedWorkplace;
 
+                  final jobType = job['job_type'] as String? ?? '';
+
+                  final matchesJobType =
+                      selectedJobType == 'All' || jobType == selectedJobType;
                   final searchableText = '$title $company $location $skills'
                       .toLowerCase();
 
-                  return matchesWorkplace && searchableText.contains(query);
+                  return matchesWorkplace &&
+                      matchesJobType &&
+                      searchableText.contains(query);
                 }).toList();
 
                 if (filteredJobs.isEmpty) {
@@ -243,11 +250,17 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
                     subtitle: query.isEmpty
                         ? 'New opportunities will appear here when employers publish jobs.'
                         : 'Try another search or change the filter.',
-                    action: query.isNotEmpty || selectedWorkplace != 'All'
+                    action:
+                        query.isNotEmpty ||
+                            selectedWorkplace != 'All' ||
+                            selectedJobType != 'All'
                         ? TextButton(
                             onPressed: () {
                               searchController.clear();
-                              setState(() => selectedWorkplace = 'All');
+                              setState(() {
+                                selectedWorkplace = 'All';
+                                selectedJobType = 'All';
+                              });
                             },
                             child: const Text('Clear filters'),
                           )
