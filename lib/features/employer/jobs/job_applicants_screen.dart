@@ -1,18 +1,14 @@
-
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class JobApplicantsScreen extends StatefulWidget {
-  const JobApplicantsScreen({
-    super.key,
-    required this.job,
-  });
+  const JobApplicantsScreen({super.key, required this.job});
 
   final Map<String, dynamic> job;
 
   @override
-  State<JobApplicantsScreen> createState() =>
-      _JobApplicantsScreenState();
+  State<JobApplicantsScreen> createState() => _JobApplicantsScreenState();
 }
 
 class _JobApplicantsScreenState extends State<JobApplicantsScreen> {
@@ -113,6 +109,40 @@ class _JobApplicantsScreenState extends State<JobApplicantsScreen> {
     }
   }
 
+  Future<void> _openResume(Map<String, dynamic> applicant) async {
+    final resumePath = applicant['resume_path']?.toString().trim();
+
+    if (resumePath == null || resumePath.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No resume uploaded by this applicant.')),
+      );
+      return;
+    }
+
+    try {
+      final client = Supabase.instance.client;
+
+      // Generate a temporary link for the private resume.
+      final signedUrl = await client.storage
+          .from('resumes')
+          .createSignedUrl(resumePath, 300);
+
+      final uri = Uri.parse(signedUrl);
+      final opened = await launchUrl(uri, webOnlyWindowName: '_blank');
+
+      if (!opened && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not open the resume.')),
+        );
+      }
+    } catch (error) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Resume error: $error')));
+    }
+  }
+
   void _showDetails(Map<String, dynamic> applicant) {
     showModalBottomSheet<void>(
       context: context,
@@ -131,8 +161,7 @@ class _JobApplicantsScreenState extends State<JobApplicantsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  applicant['full_name']?.toString() ??
-                      'Applicant',
+                  applicant['full_name']?.toString() ?? 'Applicant',
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w800,
@@ -155,19 +184,21 @@ class _JobApplicantsScreenState extends State<JobApplicantsScreen> {
                   style: TextStyle(fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 8),
-                SelectableText(
-                  applicant['resume_path']?.toString() ??
-                      'No resume path available',
-                ),
+                if (applicant['resume_path'] != null &&
+                    applicant['resume_path'].toString().trim().isNotEmpty)
+                  OutlinedButton.icon(
+                    onPressed: () => _openResume(applicant),
+                    icon: const Icon(Icons.picture_as_pdf_rounded),
+                    label: const Text('Open Resume / CV'),
+                  )
+                else
+                  const Text('No resume uploaded'),
                 const SizedBox(height: 8),
                 const Text(
                   'The resume is stored privately. A secure employer '
                   'access link will be connected after storage '
                   'permissions are configured.',
-                  style: TextStyle(
-                    color: Color(0xFF9292A7),
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Color(0xFF9292A7), fontSize: 12),
                 ),
               ],
             ),
@@ -187,15 +218,10 @@ class _JobApplicantsScreenState extends State<JobApplicantsScreen> {
         children: [
           Text(
             label,
-            style: const TextStyle(
-              color: Color(0xFF9292A7),
-              fontSize: 12,
-            ),
+            style: const TextStyle(color: Color(0xFF9292A7), fontSize: 12),
           ),
           const SizedBox(height: 4),
-          SelectableText(
-            text == null || text.isEmpty ? 'Not provided' : text,
-          ),
+          SelectableText(text == null || text.isEmpty ? 'Not provided' : text),
         ],
       ),
     );
@@ -298,8 +324,7 @@ class _JobApplicantsScreenState extends State<JobApplicantsScreen> {
                 const SizedBox(height: 18),
                 ...applicants.map((applicant) {
                   final name =
-                      applicant['full_name']?.toString() ??
-                      'Applicant';
+                      applicant['full_name']?.toString() ?? 'Applicant';
 
                   final currentStatus =
                       applicant['status']?.toString() ?? 'applied';
@@ -323,8 +348,7 @@ class _JobApplicantsScreenState extends State<JobApplicantsScreen> {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       name,
@@ -377,14 +401,12 @@ class _JobApplicantsScreenState extends State<JobApplicantsScreen> {
                               return DropdownMenuItem(
                                 value: status,
                                 child: Text(
-                                  status[0].toUpperCase() +
-                                      status.substring(1),
+                                  status[0].toUpperCase() + status.substring(1),
                                 ),
                               );
                             }).toList(),
                             onChanged: (value) {
-                              if (value != null &&
-                                  value != currentStatus) {
+                              if (value != null && value != currentStatus) {
                                 _updateStatus(applicant, value);
                               }
                             },
