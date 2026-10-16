@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'job_details_screen.dart';
+import 'saved_jobs_screen.dart';
 
 class BrowseJobsScreen extends StatefulWidget {
   const BrowseJobsScreen({super.key});
@@ -14,12 +15,14 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
   final searchController = TextEditingController();
 
   String selectedWorkplace = 'All';
+  final Set<String> savedJobIds = {};
   late Future<List<Map<String, dynamic>>> jobsFuture;
-
+  
   @override
   void initState() {
     super.initState();
     jobsFuture = _loadJobs();
+    _loadSavedJobIds();
   }
 
   @override
@@ -38,6 +41,78 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
     return List<Map<String, dynamic>>.from(response);
   }
 
+  Future<void> _loadSavedJobIds() async {
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user == null) return;
+
+      final response = await Supabase.instance.client
+          .from('saved_jobs')
+          .select('job_id')
+          .eq('user_id', user.id);
+
+      if (!mounted) return;
+
+      setState(() {
+        savedJobIds
+          ..clear()
+          ..addAll(
+            List<Map<String, dynamic>>.from(response)
+                .map((item) => item['job_id'].toString()),
+          );
+      });
+    } catch (e) {
+      debugPrint('Could not load saved jobs: $e');
+    }
+  }
+
+  Future<void> _toggleSavedJob(Map<String, dynamic> job) async {
+    final client = Supabase.instance.client;
+    final user = client.auth.currentUser;
+
+    if (user == null) return;
+
+    final jobId = job['id'].toString();
+    final wasSaved = savedJobIds.contains(jobId);
+
+    try {
+      if (wasSaved) {
+        await client
+            .from('saved_jobs')
+            .delete()
+            .eq('user_id', user.id)
+            .eq('job_id', job['id']);
+
+        if (!mounted) return;
+        setState(() => savedJobIds.remove(jobId));
+      } else {
+        await client.from('saved_jobs').insert({
+          'user_id': user.id,
+          'job_id': job['id'],
+        });
+
+        if (!mounted) return;
+        setState(() => savedJobIds.add(jobId));
+      }
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            wasSaved
+                ? 'Job removed from Saved Jobs'
+                : 'Job saved successfully!',
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not update saved job: $e')));
+    }
+  }
+
   void _refreshJobs() {
     setState(() {
       jobsFuture = _loadJobs();
@@ -50,6 +125,18 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
       appBar: AppBar(
         title: const Text('Explore Jobs'),
         actions: [
+          IconButton(
+            tooltip: 'Saved Jobs',
+            icon: const Icon(Icons.bookmarks_outlined),
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SavedJobsScreen()),
+              );
+
+              _loadSavedJobIds();
+            },
+          ),
           IconButton(
             tooltip: 'Refresh jobs',
             onPressed: _refreshJobs,
@@ -235,9 +322,22 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
                                         ],
                                       ),
                                     ),
-                                    const Icon(
-                                      Icons.arrow_outward_rounded,
-                                      color: Color(0xFF9292A7),
+                                    IconButton(
+                                      tooltip:
+                                          savedJobIds.contains(
+                                            job['id'].toString(),
+                                          )
+                                          ? 'Remove saved job'
+                                          : 'Save job',
+                                      onPressed: () => _toggleSavedJob(job),
+                                      icon: Icon(
+                                        savedJobIds.contains(
+                                              job['id'].toString(),
+                                            )
+                                            ? Icons.bookmark_rounded
+                                            : Icons.bookmark_border_rounded,
+                                        color: const Color(0xFFB49AFF),
+                                      ),
                                     ),
                                   ],
                                 ),
