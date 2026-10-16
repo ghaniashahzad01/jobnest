@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../company_profile/company_profile_screen.dart';
 import '../../auth/screens/welcome_screen.dart';
 import '../jobs/post_job_screen.dart';
 import '../jobs/my_jobs_screen.dart';
@@ -68,34 +70,29 @@ class _EmployerDashboardState extends State<EmployerDashboard> {
     }
   }
 
-  
+  Future<void> _logout() async {
+    if (isLoggingOut) return;
 
-Future<void> _logout() async {
-  if (isLoggingOut) return;
+    setState(() => isLoggingOut = true);
 
-  setState(() => isLoggingOut = true);
+    try {
+      await Supabase.instance.client.auth.signOut();
 
-  try {
-    await Supabase.instance.client.auth.signOut();
+      if (!mounted) return;
 
-    if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const WelcomeScreen()),
+        (route) => false,
+      );
+    } catch (error) {
+      if (!mounted) return;
 
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (_) => const WelcomeScreen(),
-      ),
-      (route) => false,
-    );
-  } catch (error) {
-    if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Logout failed: $error')));
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Logout failed: $error')),
-    );
-
-    setState(() => isLoggingOut = false);
+      setState(() => isLoggingOut = false);
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -229,6 +226,30 @@ Future<void> _logout() async {
                         ),
                       );
                     }
+                  },
+                ),
+              ),
+
+              Card(
+                child: ListTile(
+                  contentPadding: const EdgeInsets.all(18),
+                  leading: const Icon(
+                    Icons.business_outlined,
+                    color: Color(0xFF9B6DFF),
+                    size: 30,
+                  ),
+                  title: const Text('Company Profile'),
+                  subtitle: const Text(
+                    'Manage your company details and public information.',
+                  ),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const CompanyProfileScreen(),
+                      ),
+                    );
                   },
                 ),
               ),
