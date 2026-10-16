@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -6,12 +5,10 @@ class SmartJobMatchingScreen extends StatefulWidget {
   const SmartJobMatchingScreen({super.key});
 
   @override
-  State<SmartJobMatchingScreen> createState() =>
-      _SmartJobMatchingScreenState();
+  State<SmartJobMatchingScreen> createState() => _SmartJobMatchingScreenState();
 }
 
-class _SmartJobMatchingScreenState
-    extends State<SmartJobMatchingScreen> {
+class _SmartJobMatchingScreenState extends State<SmartJobMatchingScreen> {
   final skillsController = TextEditingController();
 
   bool isLoading = true;
@@ -19,11 +16,11 @@ class _SmartJobMatchingScreenState
   List<Map<String, dynamic>> jobs = [];
 
   @override
-void initState() {
-  super.initState();
-  loadJobs();
-  loadProfileSkills();
-}
+  void initState() {
+    super.initState();
+    loadJobs();
+    loadProfileSkills();
+  }
 
   @override
   void dispose() {
@@ -54,32 +51,30 @@ void initState() {
     }
   }
 
-  
-Future<void> loadProfileSkills() async {
-  try {
-    final user = Supabase.instance.client.auth.currentUser;
-    if (user == null) return;
+  Future<void> loadProfileSkills() async {
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user == null) return;
 
-    final profile = await Supabase.instance.client
-        .from('profiles')
-        .select('skills')
-        .eq('id', user.id)
-        .maybeSingle();
+      final profile = await Supabase.instance.client
+          .from('profiles')
+          .select('skills')
+          .eq('id', user.id)
+          .maybeSingle();
 
-    if (!mounted || profile == null) return;
+      if (!mounted || profile == null) return;
 
-    final savedSkills = profile['skills'];
+      final savedSkills = profile['skills'];
 
-    if (savedSkills is List && savedSkills.isNotEmpty) {
-      skillsController.text = savedSkills.join(', ');
+      if (savedSkills is List && savedSkills.isNotEmpty) {
+        skillsController.text = savedSkills.join(', ');
 
-      setState(() {});
+        setState(() {});
+      }
+    } catch (e) {
+      debugPrint('Could not load profile skills: $e');
     }
-  } catch (e) {
-    debugPrint('Could not load profile skills: $e');
   }
-}
-
 
   List<String> get userSkills => skillsController.text
       .toLowerCase()
@@ -97,17 +92,17 @@ Future<void> loadProfileSkills() async {
     // database uses different names for skills or descriptions.
     final jobText = job.entries
         .where((entry) => entry.value != null)
-        .map((entry) => entry.value is List
-            ? (entry.value as List).join(' ')
-            : entry.value.toString())
+        .map(
+          (entry) => entry.value is List
+              ? (entry.value as List).join(' ')
+              : entry.value.toString(),
+        )
         .join(' ')
         .toLowerCase();
 
     final matches = skills.where((skill) {
       return RegExp(
-        r'(^|[^a-z0-9+#.])' +
-            RegExp.escape(skill) +
-            r'($|[^a-z0-9+#.])',
+        r'(^|[^a-z0-9+#.])' + RegExp.escape(skill) + r'($|[^a-z0-9+#.])',
       ).hasMatch(jobText);
     }).length;
 
@@ -117,8 +112,7 @@ Future<void> loadProfileSkills() async {
   @override
   Widget build(BuildContext context) {
     final results = jobs.toList()
-      ..sort((a, b) =>
-          matchPercentage(b).compareTo(matchPercentage(a)));
+      ..sort((a, b) => matchPercentage(b).compareTo(matchPercentage(a)));
 
     return Scaffold(
       appBar: AppBar(
@@ -126,7 +120,7 @@ Future<void> loadProfileSkills() async {
         actions: [
           IconButton(
             onPressed: loadJobs,
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.refresh),
             tooltip: 'Refresh jobs',
           ),
         ],
@@ -141,10 +135,7 @@ Future<void> loadProfileSkills() async {
                 children: [
                   const Text(
                     'Find your best match ✨',
-                    style: TextStyle(
-                      fontSize: 23,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   const Text(
@@ -156,8 +147,7 @@ Future<void> loadProfileSkills() async {
                     controller: skillsController,
                     maxLines: 3,
                     decoration: const InputDecoration(
-                      hintText:
-                          'e.g. Flutter, Dart, Supabase, REST API',
+                      hintText: 'e.g. Flutter, Dart, Supabase, REST API',
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.psychology_outlined),
                     ),
@@ -170,112 +160,102 @@ Future<void> loadProfileSkills() async {
               child: isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : errorMessage != null
-                      ? Center(
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Could not load jobs:\n$errorMessage',
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 12),
+                            ElevatedButton(
+                              onPressed: loadJobs,
+                              child: const Text('Try Again'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : jobs.isEmpty
+                  ? const Center(child: Text('No active jobs available yet.'))
+                  : userSkills.isEmpty
+                  ? const Center(
+                      child: Text('Enter your skills to see job matches.'),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: results.length,
+                      itemBuilder: (context, index) {
+                        final job = results[index];
+                        final percentage = matchPercentage(job);
+
+                        final title =
+                            (job['title'] ??
+                                    job['job_title'] ??
+                                    'Job opportunity')
+                                .toString();
+                        final company =
+                            (job['company_name'] ?? job['company'] ?? 'Company')
+                                .toString();
+                        final location =
+                            (job['location'] ?? 'Location not specified')
+                                .toString();
+
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 14),
                           child: Padding(
-                            padding: const EdgeInsets.all(20),
+                            padding: const EdgeInsets.all(16),
                             child: Column(
-                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Could not load jobs:\n$errorMessage',
-                                  textAlign: TextAlign.center,
+                                  title,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                                const SizedBox(height: 12),
-                                ElevatedButton(
-                                  onPressed: loadJobs,
-                                  child: const Text('Try Again'),
+                                const SizedBox(height: 6),
+                                Text(company),
+                                const SizedBox(height: 4),
+                                Text(location),
+                                const SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.auto_awesome,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        '$percentage% skill keyword match',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: LinearProgressIndicator(
+                                    value: percentage / 100,
+                                    minHeight: 8,
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                        )
-                      : jobs.isEmpty
-                          ? const Center(
-                              child: Text('No active jobs available yet.'),
-                            )
-                          : userSkills.isEmpty
-                              ? const Center(
-                                  child: Text(
-                                    'Enter your skills to see job matches.',
-                                  ),
-                                )
-                              : ListView.builder(
-                                  padding: const EdgeInsets.all(16),
-                                  itemCount: results.length,
-                                  itemBuilder: (context, index) {
-                                    final job = results[index];
-                                    final percentage =
-                                        matchPercentage(job);
-
-                                    final title =
-                                        (job['title'] ??
-                                                job['job_title'] ??
-                                                'Job opportunity')
-                                            .toString();
-                                    final company =
-                                        (job['company_name'] ??
-                                                job['company'] ??
-                                                'Company')
-                                            .toString();
-                                    final location =
-                                        (job['location'] ?? 'Location not specified')
-                                            .toString();
-
-                                    return Card(
-                                      margin: const EdgeInsets.only(
-                                        bottom: 14,
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(16),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              title,
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 6),
-                                            Text(company),
-                                            const SizedBox(height: 4),
-                                            Text(location),
-                                            const SizedBox(height: 16),
-                                            Row(
-                                              children: [
-                                                const Icon(
-                                                  Icons.auto_awesome,
-                                                  color: Color(0xFF9B6DFF),
-                                                ),
-                                                const SizedBox(width: 8),
-                                                Expanded(
-                                                  child: Text(
-                                                    '$percentage% skill keyword match',
-                                                    style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 8),
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              child: LinearProgressIndicator(
-                                                value: percentage / 100,
-                                                minHeight: 8,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
+                        );
+                      },
+                    ),
             ),
           ],
         ),

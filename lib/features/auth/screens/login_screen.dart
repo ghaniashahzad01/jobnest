@@ -146,9 +146,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 Container(
                   padding: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF151520),
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFF292938)),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -203,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: obscurePassword,
                   decoration: InputDecoration(
                     hintText: 'Enter your password',
-                    prefixIcon: const Icon(Icons.lock_outline_rounded),
+                    prefixIcon: Icon(Icons.lock_outline_rounded),
                     suffixIcon: IconButton(
                       onPressed: () {
                         setState(() {
@@ -292,7 +294,9 @@ class _RoleButton extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 180),
       decoration: BoxDecoration(
-        color: selected ? const Color(0xFF9B6DFF) : Colors.transparent,
+        color: selected
+            ? Theme.of(context).colorScheme.primary
+            : Colors.transparent,
         borderRadius: BorderRadius.circular(12),
       ),
       child: InkWell(
@@ -304,7 +308,9 @@ class _RoleButton extends StatelessWidget {
             child: Text(
               title,
               style: TextStyle(
-                color: selected ? Colors.white : const Color(0xFF9292A7),
+                color: selected
+                    ? Colors.white
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w700,
               ),
             ),

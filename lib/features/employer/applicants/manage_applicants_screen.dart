@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -8,8 +7,7 @@ class ManageApplicantsScreen extends StatefulWidget {
   const ManageApplicantsScreen({super.key});
 
   @override
-  State<ManageApplicantsScreen> createState() =>
-      _ManageApplicantsScreenState();
+  State<ManageApplicantsScreen> createState() => _ManageApplicantsScreenState();
 }
 
 class _ManageApplicantsScreenState extends State<ManageApplicantsScreen> {
@@ -52,7 +50,7 @@ class _ManageApplicantsScreenState extends State<ManageApplicantsScreen> {
         actions: [
           IconButton(
             onPressed: _refresh,
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.refresh),
             tooltip: 'Refresh jobs',
           ),
         ],
@@ -120,24 +118,21 @@ class _ManageApplicantsScreenState extends State<ManageApplicantsScreen> {
             children: [
               const Text(
                 'Select a job',
-                style: TextStyle(
-                  fontSize: 23,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 6),
-              const Text(
+              Text(
                 'Open a listing to review candidates and application statuses.',
-                style: TextStyle(color: Color(0xFF9292A7)),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: 18),
               ...jobs.map((job) {
-                final title =
-                    (job['title'] ?? 'Untitled job').toString();
-                final company =
-                    (job['company_name'] ?? '').toString();
-                final location =
-                    (job['location'] ?? 'Location not specified').toString();
+                final title = (job['title'] ?? 'Untitled job').toString();
+                final company = (job['company_name'] ?? '').toString();
+                final location = (job['location'] ?? 'Location not specified')
+                    .toString();
                 final status = (job['status'] ?? 'active').toString();
 
                 return Card(
@@ -149,9 +144,7 @@ class _ManageApplicantsScreenState extends State<ManageApplicantsScreen> {
                     ),
                     title: Text(
                       title,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 8),
@@ -164,9 +157,9 @@ class _ManageApplicantsScreenState extends State<ManageApplicantsScreen> {
                       ),
                     ),
                     isThreeLine: true,
-                    trailing: const Icon(
+                    trailing: Icon(
                       Icons.chevron_right_rounded,
-                      color: Color(0xFF9B6DFF),
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     onTap: () {
                       Navigator.push(

@@ -128,7 +128,7 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
         actions: [
           IconButton(
             tooltip: 'Saved Jobs',
-            icon: const Icon(Icons.bookmarks_outlined),
+            icon: Icon(Icons.bookmarks_outlined),
             onPressed: () async {
               await Navigator.push(
                 context,
@@ -141,7 +141,7 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
           IconButton(
             tooltip: 'Refresh jobs',
             onPressed: _refreshJobs,
-            icon: const Icon(Icons.refresh_rounded),
+            icon: Icon(Icons.refresh_rounded),
           ),
         ],
       ),
@@ -154,7 +154,7 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
               onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
                 hintText: 'Search jobs, companies, skills...',
-                prefixIcon: const Icon(Icons.search_rounded),
+                prefixIcon: Icon(Icons.search_rounded),
                 suffixIcon: searchController.text.isEmpty
                     ? null
                     : IconButton(
@@ -162,7 +162,7 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
                           searchController.clear();
                           setState(() {});
                         },
-                        icon: const Icon(Icons.close_rounded),
+                        icon: Icon(Icons.close_rounded),
                       ),
               ),
             ),
@@ -303,13 +303,17 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
                                     Container(
                                       padding: const EdgeInsets.all(12),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFF9B6DFF)
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary
                                             .withValues(alpha: 0.15),
                                         borderRadius: BorderRadius.circular(14),
                                       ),
-                                      child: const Icon(
+                                      child: Icon(
                                         Icons.work_outline_rounded,
-                                        color: Color(0xFF9B6DFF),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
                                       ),
                                     ),
                                     const SizedBox(width: 12),
@@ -320,7 +324,7 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
                                         children: [
                                           Text(
                                             job['title'] ?? 'Untitled job',
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w700,
                                             ),
@@ -328,8 +332,10 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
                                           const SizedBox(height: 5),
                                           Text(
                                             job['company_name'] ?? '',
-                                            style: const TextStyle(
-                                              color: Color(0xFFB6B2C7),
+                                            style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurfaceVariant,
                                             ),
                                           ),
                                         ],
@@ -349,7 +355,9 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
                                             )
                                             ? Icons.bookmark_rounded
                                             : Icons.bookmark_border_rounded,
-                                        color: const Color(0xFFB49AFF),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
                                       ),
                                     ),
                                   ],
@@ -392,26 +400,30 @@ class _BrowseJobsScreenState extends State<BrowseJobsScreen> {
                                           vertical: 7,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: const Color(0xFF22202F),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .surfaceContainerHighest,
                                           borderRadius: BorderRadius.circular(
                                             9,
                                           ),
                                         ),
                                         child: Text(
                                           skill,
-                                          style: const TextStyle(fontSize: 12),
+                                          style: TextStyle(fontSize: 12),
                                         ),
                                       );
                                     }).toList(),
                                   ),
                                 ],
                                 const SizedBox(height: 16),
-                                const Align(
+                                Align(
                                   alignment: Alignment.centerRight,
                                   child: Text(
                                     'View details →',
                                     style: TextStyle(
-                                      color: Color(0xFFB49AFF),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary,
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
@@ -452,7 +464,7 @@ class _FilterChip extends StatelessWidget {
         label: Text(label),
         selected: selected,
         onSelected: (_) => onTap(),
-        selectedColor: const Color(0xFF9B6DFF),
+        selectedColor: Theme.of(context).colorScheme.primary,
       ),
     );
   }
@@ -469,15 +481,15 @@ class _InfoChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       decoration: BoxDecoration(
-        color: const Color(0xFF22202F),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(9),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: const Color(0xFFB49AFF)),
+          Icon(icon, size: 14, color: Theme.of(context).colorScheme.primary),
           const SizedBox(width: 5),
-          Text(label, style: const TextStyle(fontSize: 12)),
+          Text(label, style: TextStyle(fontSize: 12)),
         ],
       ),
     );
@@ -502,12 +514,12 @@ class _MessageView extends StatelessWidget {
     return ListView(
       children: [
         const SizedBox(height: 90),
-        Icon(icon, size: 54, color: const Color(0xFF9B6DFF)),
+        Icon(icon, size: 54, color: Theme.of(context).colorScheme.primary),
         const SizedBox(height: 16),
         Center(
           child: Text(
             title,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
           ),
         ),
         const SizedBox(height: 8),
@@ -516,7 +528,9 @@ class _MessageView extends StatelessWidget {
           child: Text(
             subtitle,
             textAlign: TextAlign.center,
-            style: const TextStyle(color: Color(0xFF9292A7)),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ),
         if (action != null) Center(child: action!),

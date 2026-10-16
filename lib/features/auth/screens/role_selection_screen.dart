@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+
 import 'login_screen.dart';
 import 'signup_screen.dart';
 
@@ -9,9 +9,7 @@ class RoleSelectionScreen extends StatelessWidget {
   void openSignup(BuildContext context, String role) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => SignupScreen(role: role),
-      ),
+      MaterialPageRoute(builder: (_) => SignupScreen(role: role)),
     );
   }
 
@@ -30,9 +28,11 @@ class RoleSelectionScreen extends StatelessWidget {
               style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 10),
-            const Text(
+            Text(
               'Choose the account that fits your goals.',
-              style: TextStyle(color: Color(0xFF9292A7)),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 30),
             _RoleCard(
@@ -46,8 +46,7 @@ class RoleSelectionScreen extends StatelessWidget {
             _RoleCard(
               icon: Icons.business_rounded,
               title: 'I am hiring',
-              description:
-                  'Post jobs, review applicants, and find the right candidates.',
+              description: 'Post jobs, review applicants, and find the right candidates.',
               onTap: () => openSignup(context, 'employer'),
             ),
             const Spacer(),
@@ -85,7 +84,7 @@ class _RoleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: const Color(0xFF151520),
+      color: Theme.of(context).colorScheme.surface,
       borderRadius: BorderRadius.circular(22),
       child: InkWell(
         onTap: onTap,
@@ -94,7 +93,9 @@ class _RoleCard extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: const Color(0xFF292938)),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant,
+            ),
           ),
           child: Row(
             children: [
@@ -102,31 +103,40 @@ class _RoleCard extends StatelessWidget {
                 width: 54,
                 height: 54,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF9B6DFF).withValues(alpha: 0.14),
+                  color: Theme.of(context).colorScheme.primary
+                      .withValues(alpha: 0.14),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(icon, color: const Color(0xFFB69AFF), size: 28),
+                child: Icon(
+                  icon,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 28,
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        )),
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     const SizedBox(height: 7),
-                    Text(description,
-                        style: const TextStyle(
-                          color: Color(0xFF9292A7),
-                          height: 1.4,
-                        )),
+                    Text(
+                      description,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        height: 1.4,
+                      ),
+                    ),
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right_rounded),
+              Icon(Icons.chevron_right_rounded),
             ],
           ),
         ),

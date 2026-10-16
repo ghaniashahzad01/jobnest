@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -41,10 +40,7 @@ class _SignupScreenState extends State<SignupScreen> {
       final response = await supabase.auth.signUp(
         email: emailController.text.trim(),
         password: passwordController.text,
-        data: {
-          'full_name': nameController.text.trim(),
-          'role': widget.role,
-        },
+        data: {'full_name': nameController.text.trim(), 'role': widget.role},
       );
 
       if (!mounted) return;
@@ -68,17 +64,14 @@ class _SignupScreenState extends State<SignupScreen> {
     } on AuthException catch (error) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error.message)),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error.message)));
     } catch (error) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            'Something went wrong. Please try again.',
-          ),
+          content: Text('Something went wrong. Please try again.'),
         ),
       );
 
@@ -144,9 +137,8 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   validator: (value) {
                     final email = value?.trim() ?? '';
-                    if (!RegExp(
-                      r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
-                    ).hasMatch(email)) {
+                    if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+                        .hasMatch(email)) {
                       return 'Enter a valid email address';
                     }
                     return null;
@@ -161,7 +153,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   obscureText: obscurePassword,
                   decoration: InputDecoration(
                     hintText: 'At least 8 characters',
-                    prefixIcon: const Icon(Icons.lock_outline_rounded),
+                    prefixIcon: Icon(Icons.lock_outline_rounded),
                     suffixIcon: IconButton(
                       onPressed: () {
                         setState(() {
@@ -202,12 +194,12 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
 
                 const SizedBox(height: 16),
-                const Center(
+                Center(
                   child: Text(
                     'Your account details are protected by Supabase authentication.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Color(0xFF9292A7),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: 12,
                     ),
                   ),

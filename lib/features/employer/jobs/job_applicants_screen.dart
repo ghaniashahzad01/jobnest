@@ -162,10 +162,7 @@ class _JobApplicantsScreenState extends State<JobApplicantsScreen> {
               children: [
                 Text(
                   applicant['full_name']?.toString() ?? 'Applicant',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 20),
                 _detail('Email', applicant['email']),
@@ -188,17 +185,20 @@ class _JobApplicantsScreenState extends State<JobApplicantsScreen> {
                     applicant['resume_path'].toString().trim().isNotEmpty)
                   OutlinedButton.icon(
                     onPressed: () => _openResume(applicant),
-                    icon: const Icon(Icons.picture_as_pdf_rounded),
+                    icon: Icon(Icons.picture_as_pdf_rounded),
                     label: const Text('Open Resume / CV'),
                   )
                 else
                   const Text('No resume uploaded'),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'The resume is stored privately. A secure employer '
                   'access link will be connected after storage '
                   'permissions are configured.',
-                  style: TextStyle(color: Color(0xFF9292A7), fontSize: 12),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
                 ),
               ],
             ),
@@ -218,7 +218,10 @@ class _JobApplicantsScreenState extends State<JobApplicantsScreen> {
         children: [
           Text(
             label,
-            style: const TextStyle(color: Color(0xFF9292A7), fontSize: 12),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 12,
+            ),
           ),
           const SizedBox(height: 4),
           SelectableText(text == null || text.isEmpty ? 'Not provided' : text),
@@ -238,7 +241,7 @@ class _JobApplicantsScreenState extends State<JobApplicantsScreen> {
           IconButton(
             tooltip: 'Refresh',
             onPressed: _refresh,
-            icon: const Icon(Icons.refresh_rounded),
+            icon: Icon(Icons.refresh_rounded),
           ),
         ],
       ),
@@ -256,7 +259,7 @@ class _JobApplicantsScreenState extends State<JobApplicantsScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.error_outline_rounded, size: 42),
+                    Icon(Icons.error_outline_rounded, size: 42),
                     const SizedBox(height: 12),
                     Text(
                       'Could not load applicants.\n${snapshot.error}',
@@ -280,10 +283,10 @@ class _JobApplicantsScreenState extends State<JobApplicantsScreen> {
               child: ListView(
                 children: [
                   const SizedBox(height: 150),
-                  const Icon(
+                  Icon(
                     Icons.people_outline_rounded,
                     size: 56,
-                    color: Color(0xFF9B6DFF),
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   const SizedBox(height: 16),
                   const Center(
@@ -314,10 +317,7 @@ class _JobApplicantsScreenState extends State<JobApplicantsScreen> {
               children: [
                 Text(
                   '$title',
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 6),
                 Text('${applicants.length} application(s)'),
@@ -338,11 +338,14 @@ class _JobApplicantsScreenState extends State<JobApplicantsScreen> {
                         children: [
                           Row(
                             children: [
-                              const CircleAvatar(
-                                backgroundColor: Color(0xFF302447),
+                              CircleAvatar(
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withValues(alpha: 0.14),
                                 child: Icon(
                                   Icons.person_outline_rounded,
-                                  color: Color(0xFFB89AFF),
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -352,7 +355,7 @@ class _JobApplicantsScreenState extends State<JobApplicantsScreen> {
                                   children: [
                                     Text(
                                       name,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.w700,
                                         fontSize: 17,
                                       ),
@@ -360,8 +363,10 @@ class _JobApplicantsScreenState extends State<JobApplicantsScreen> {
                                     Text(
                                       applicant['email']?.toString() ??
                                           'No email',
-                                      style: const TextStyle(
-                                        color: Color(0xFF9292A7),
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurfaceVariant,
                                       ),
                                     ),
                                   ],
@@ -377,14 +382,16 @@ class _JobApplicantsScreenState extends State<JobApplicantsScreen> {
                           const SizedBox(height: 14),
                           OutlinedButton.icon(
                             onPressed: () => _showDetails(applicant),
-                            icon: const Icon(Icons.person_search_rounded),
+                            icon: Icon(Icons.person_search_rounded),
                             label: const Text('View Candidate Details'),
                           ),
                           const SizedBox(height: 10),
-                          const Text(
+                          Text(
                             'Application status',
                             style: TextStyle(
-                              color: Color(0xFF9292A7),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
                               fontSize: 12,
                             ),
                           ),

@@ -1,16 +1,13 @@
-
 import 'package:flutter/material.dart';
 
 class SkillGapAnalysisScreen extends StatefulWidget {
   const SkillGapAnalysisScreen({super.key});
 
   @override
-  State<SkillGapAnalysisScreen> createState() =>
-      _SkillGapAnalysisScreenState();
+  State<SkillGapAnalysisScreen> createState() => _SkillGapAnalysisScreenState();
 }
 
-class _SkillGapAnalysisScreenState
-    extends State<SkillGapAnalysisScreen> {
+class _SkillGapAnalysisScreenState extends State<SkillGapAnalysisScreen> {
   final currentSkillsController = TextEditingController();
   final requiredSkillsController = TextEditingController();
 
@@ -70,19 +67,14 @@ class _SkillGapAnalysisScreenState
         : (matchedSkills.length / requiredSkills.length * 100).round();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Skill Gap Analysis'),
-      ),
+      appBar: AppBar(title: const Text('Skill Gap Analysis')),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
             const Text(
               'Build your career skills 📈',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             const Text(
@@ -114,7 +106,7 @@ class _SkillGapAnalysisScreenState
             const SizedBox(height: 18),
             FilledButton.icon(
               onPressed: analyzeSkills,
-              icon: const Icon(Icons.analytics_outlined),
+              icon: Icon(Icons.analytics_outlined),
               label: const Text('Analyze Skills'),
             ),
             if (analyzed) ...[
@@ -135,10 +127,10 @@ class _SkillGapAnalysisScreenState
                       const SizedBox(height: 12),
                       Text(
                         '$percentage%',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF9B6DFF),
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -158,10 +150,7 @@ class _SkillGapAnalysisScreenState
               const SizedBox(height: 16),
               const Text(
                 'Skills you already have',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               if (matchedSkills.isEmpty)
@@ -173,7 +162,7 @@ class _SkillGapAnalysisScreenState
                   children: matchedSkills
                       .map(
                         (skill) => Chip(
-                          avatar: const Icon(
+                          avatar: Icon(
                             Icons.check_circle,
                             color: Colors.green,
                             size: 18,
@@ -186,10 +175,7 @@ class _SkillGapAnalysisScreenState
               const SizedBox(height: 20),
               const Text(
                 'Skills to develop',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               if (missingSkills.isEmpty)
@@ -200,9 +186,9 @@ class _SkillGapAnalysisScreenState
                 ...missingSkills.map(
                   (skill) => Card(
                     child: ListTile(
-                      leading: const Icon(
+                      leading: Icon(
                         Icons.school_outlined,
-                        color: Color(0xFF9B6DFF),
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                       title: Text(skill),
                       subtitle: Text('Add $skill to your learning plan.'),

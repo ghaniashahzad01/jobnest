@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,8 +10,8 @@ class ThemeController extends ChangeNotifier {
   ThemeMode get themeMode => _themeMode;
 
   ThemeController._() {
-  _loadTheme();
-}
+    _loadTheme();
+  }
 
   Future<void> _loadTheme() async {
     try {

@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/theme_controller.dart';
+import 'theme_toggle_button.dart';
 
 class ThemeSettingsScreen extends StatelessWidget {
   const ThemeSettingsScreen({super.key});
@@ -18,88 +18,91 @@ class ThemeSettingsScreen extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(
             title: const Text('Appearance'),
+            actions: const [ThemeToggleButton()],
           ),
-          body: ListView(
-            padding: const EdgeInsets.all(20),
-            children: [
-              Container(
+          body: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 640),
+              child: ListView(
                 padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFF9B6DFF),
-                      Color(0xFF6265F1),
-                    ],
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Theme.of(context).colorScheme.primary,
+                          Theme.of(context).colorScheme.secondary,
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.palette_outlined,
+                          color: Colors.white,
+                          size: 36,
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          'Make JobNest yours',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'Choose the appearance that feels right for you.',
+                          style: TextStyle(color: Colors.white70, fontSize: 14),
+                        ),
+                      ],
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.palette_outlined,
-                      color: Colors.white,
-                      size: 36,
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      'Make JobNest yours',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'Choose the appearance that feels right for you.',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 28),
-              Text(
-                'THEME PREFERENCE',
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  const SizedBox(height: 28),
+                  Text(
+                    'THEME PREFERENCE',
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
                       letterSpacing: 1.2,
                       fontWeight: FontWeight.bold,
                     ),
+                  ),
+                  const SizedBox(height: 12),
+                  _ThemeOption(
+                    title: 'Light Mode',
+                    subtitle: 'Bright and clear appearance',
+                    icon: Icons.light_mode_outlined,
+                    selected: selectedMode == ThemeMode.light,
+                    onTap: () => controller.setThemeMode(ThemeMode.light),
+                  ),
+                  const SizedBox(height: 10),
+                  _ThemeOption(
+                    title: 'Dark Mode',
+                    subtitle: 'Easy on the eyes in low light',
+                    icon: Icons.dark_mode_outlined,
+                    selected: selectedMode == ThemeMode.dark,
+                    onTap: () => controller.setThemeMode(ThemeMode.dark),
+                  ),
+                  const SizedBox(height: 10),
+                  _ThemeOption(
+                    title: 'System Default',
+                    subtitle: 'Follow your device appearance',
+                    icon: Icons.settings_suggest_outlined,
+                    selected: selectedMode == ThemeMode.system,
+                    onTap: () => controller.setThemeMode(ThemeMode.system),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Your preference is saved automatically.',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
               ),
-              const SizedBox(height: 12),
-              _ThemeOption(
-                title: 'Light Mode',
-                subtitle: 'Bright and clear appearance',
-                icon: Icons.light_mode_outlined,
-                selected: selectedMode == ThemeMode.light,
-                onTap: () => controller.setThemeMode(ThemeMode.light),
-              ),
-              const SizedBox(height: 10),
-              _ThemeOption(
-                title: 'Dark Mode',
-                subtitle: 'Easy on the eyes in low light',
-                icon: Icons.dark_mode_outlined,
-                selected: selectedMode == ThemeMode.dark,
-                onTap: () => controller.setThemeMode(ThemeMode.dark),
-              ),
-              const SizedBox(height: 10),
-              _ThemeOption(
-                title: 'System Default',
-                subtitle: 'Follow your device appearance',
-                icon: Icons.settings_suggest_outlined,
-                selected: selectedMode == ThemeMode.system,
-                onTap: () => controller.setThemeMode(ThemeMode.system),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Your preference is saved automatically.',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ],
+            ),
           ),
         );
       },
@@ -128,10 +131,7 @@ class _ThemeOption extends StatelessWidget {
 
     return Card(
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: Container(
           width: 46,
           height: 46,
@@ -139,15 +139,9 @@ class _ThemeOption extends StatelessWidget {
             color: theme.colorScheme.primary.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(14),
           ),
-          child: Icon(
-            icon,
-            color: theme.colorScheme.primary,
-          ),
+          child: Icon(icon, color: theme.colorScheme.primary),
         ),
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
+        title: Text(title, style: TextStyle(fontWeight: FontWeight.w600)),
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 4),
           child: Text(subtitle),

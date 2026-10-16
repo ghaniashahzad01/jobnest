@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -66,9 +65,9 @@ class _PostJobScreenState extends State<PostJobScreen> {
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Job posted successfully!')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Job posted successfully!')));
 
       Navigator.pop(context, true);
     } on PostgrestException catch (error) {
@@ -84,16 +83,12 @@ class _PostJobScreenState extends State<PostJobScreen> {
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   InputDecoration _decoration(String hint, IconData icon) {
-    return InputDecoration(
-      hintText: hint,
-      prefixIcon: Icon(icon),
-    );
+    return InputDecoration(hintText: hint, prefixIcon: Icon(icon));
   }
 
   @override
@@ -110,15 +105,14 @@ class _PostJobScreenState extends State<PostJobScreen> {
               children: [
                 const Text(
                   'Find your next great hire.',
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Share the role details so candidates know what you need.',
-                  style: TextStyle(color: Color(0xFF9292A7)),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
                 const SizedBox(height: 28),
 
@@ -130,10 +124,9 @@ class _PostJobScreenState extends State<PostJobScreen> {
                     'e.g. Flutter Developer',
                     Icons.work_outline_rounded,
                   ),
-                  validator: (value) =>
-                      value == null || value.trim().isEmpty
-                          ? 'Enter a job title'
-                          : null,
+                  validator: (value) => value == null || value.trim().isEmpty
+                      ? 'Enter a job title'
+                      : null,
                 ),
 
                 const SizedBox(height: 20),
@@ -145,10 +138,9 @@ class _PostJobScreenState extends State<PostJobScreen> {
                     'e.g. NexAppra',
                     Icons.business_outlined,
                   ),
-                  validator: (value) =>
-                      value == null || value.trim().isEmpty
-                          ? 'Enter the company name'
-                          : null,
+                  validator: (value) => value == null || value.trim().isEmpty
+                      ? 'Enter the company name'
+                      : null,
                 ),
 
                 const SizedBox(height: 20),
@@ -162,10 +154,9 @@ class _PostJobScreenState extends State<PostJobScreen> {
                     'Responsibilities, requirements and benefits...',
                     Icons.description_outlined,
                   ),
-                  validator: (value) =>
-                      value == null || value.trim().isEmpty
-                          ? 'Enter the job description'
-                          : null,
+                  validator: (value) => value == null || value.trim().isEmpty
+                      ? 'Enter the job description'
+                      : null,
                 ),
 
                 const SizedBox(height: 20),
@@ -177,10 +168,9 @@ class _PostJobScreenState extends State<PostJobScreen> {
                     'e.g. Lahore, Pakistan',
                     Icons.location_on_outlined,
                   ),
-                  validator: (value) =>
-                      value == null || value.trim().isEmpty
-                          ? 'Enter a location'
-                          : null,
+                  validator: (value) => value == null || value.trim().isEmpty
+                      ? 'Enter a location'
+                      : null,
                 ),
 
                 const SizedBox(height: 20),
@@ -223,18 +213,9 @@ class _PostJobScreenState extends State<PostJobScreen> {
                     prefixIcon: Icon(Icons.laptop_outlined),
                   ),
                   items: const [
-                    DropdownMenuItem(
-                      value: 'On-site',
-                      child: Text('On-site'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'Remote',
-                      child: Text('Remote'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'Hybrid',
-                      child: Text('Hybrid'),
-                    ),
+                    DropdownMenuItem(value: 'On-site', child: Text('On-site')),
+                    DropdownMenuItem(value: 'Remote', child: Text('Remote')),
+                    DropdownMenuItem(value: 'Hybrid', child: Text('Hybrid')),
                   ],
                   onChanged: (value) {
                     if (value != null) {
@@ -252,16 +233,15 @@ class _PostJobScreenState extends State<PostJobScreen> {
                     'Flutter, Dart, REST APIs',
                     Icons.psychology_outlined,
                   ),
-                  validator: (value) =>
-                      value == null || value.trim().isEmpty
-                          ? 'Enter at least one skill'
-                          : null,
+                  validator: (value) => value == null || value.trim().isEmpty
+                      ? 'Enter at least one skill'
+                      : null,
                 ),
                 const SizedBox(height: 6),
-                const Text(
+                Text(
                   'Separate skills with commas.',
                   style: TextStyle(
-                    color: Color(0xFF9292A7),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontSize: 12,
                   ),
                 ),

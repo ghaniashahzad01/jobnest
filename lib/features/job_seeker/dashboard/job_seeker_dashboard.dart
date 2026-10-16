@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../shared/settings/theme_settings_screen.dart';
+import '../../shared/settings/theme_toggle_button.dart';
 import '../profile/job_seeker_profile_screen.dart';
 import '../skill_gap/skill_gap_analysis_screen.dart';
 import '../matching/smart_job_matching_screen.dart';
@@ -17,9 +18,10 @@ class JobSeekerDashboard extends StatelessWidget {
       appBar: AppBar(
         title: const Text('JobNest'),
         actions: [
+          const ThemeToggleButton(),
           IconButton(
             tooltip: 'Log out',
-            icon: const Icon(Icons.logout_rounded),
+            icon: Icon(Icons.logout_rounded),
             onPressed: () async {
               await Supabase.instance.client.auth.signOut();
 
@@ -31,7 +33,7 @@ class JobSeekerDashboard extends StatelessWidget {
           ),
           IconButton(
             tooltip: 'Appearance',
-            icon: const Icon(Icons.palette_outlined),
+            icon: Icon(Icons.palette_outlined),
             onPressed: () {
               Navigator.push(
                 context,
@@ -42,90 +44,100 @@ class JobSeekerDashboard extends StatelessWidget {
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(22),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Your next opportunity.',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Discover jobs that fit your skills and goals.',
-                style: TextStyle(color: Color(0xFF9292A7)),
-              ),
-              const SizedBox(height: 26),
-
-              // Find Jobs: opens the Browse Jobs screen.
-              _FeatureCard(
-                icon: Icons.work_outline_rounded,
-                title: 'Find Jobs',
-                subtitle: 'Explore opportunities for your career.',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const BrowseJobsScreen()),
-                  );
-                },
-              ),
-
-              _FeatureCard(
-                icon: Icons.auto_awesome_rounded,
-                title: 'Smart Matching',
-                subtitle: 'Discover jobs aligned with your skills.',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const SmartJobMatchingScreen(),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 920),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(22),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Your next opportunity.',
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Discover jobs that fit your skills and goals.',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
-                  );
-                },
-              ),
+                  ),
+                  const SizedBox(height: 26),
 
-              _FeatureCard(
-                icon: Icons.trending_up_rounded,
-                title: 'Skill Gap Analysis',
-                subtitle: 'Identify skills to improve.',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const SkillGapAnalysisScreen(),
-                    ),
-                  );
-                },
-              ),
+                  // Find Jobs: opens the Browse Jobs screen.
+                  _FeatureCard(
+                    icon: Icons.work_outline_rounded,
+                    title: 'Find Jobs',
+                    subtitle: 'Explore opportunities for your career.',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const BrowseJobsScreen(),
+                        ),
+                      );
+                    },
+                  ),
 
-              _FeatureCard(
-                icon: Icons.track_changes_rounded,
-                title: 'Application Tracker',
-                subtitle: 'Keep track of your applications.',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const ApplicationTrackerScreen(),
-                    ),
-                  );
-                },
+                  _FeatureCard(
+                    icon: Icons.auto_awesome_rounded,
+                    title: 'Smart Matching',
+                    subtitle: 'Discover jobs aligned with your skills.',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SmartJobMatchingScreen(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  _FeatureCard(
+                    icon: Icons.trending_up_rounded,
+                    title: 'Skill Gap Analysis',
+                    subtitle: 'Identify skills to improve.',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SkillGapAnalysisScreen(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  _FeatureCard(
+                    icon: Icons.track_changes_rounded,
+                    title: 'Application Tracker',
+                    subtitle: 'Keep track of your applications.',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const ApplicationTrackerScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _FeatureCard(
+                    icon: Icons.person_outline_rounded,
+                    title: 'My Profile',
+                    subtitle:
+                        'Manage your skills, experience and qualifications.',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const JobSeekerProfileScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
-              _FeatureCard(
-                icon: Icons.person_outline_rounded,
-                title: 'My Profile',
-                subtitle: 'Manage your skills, experience and qualifications.',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const JobSeekerProfileScreen(),
-                    ),
-                  );
-                },
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -153,13 +165,17 @@ class _FeatureCard extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         contentPadding: const EdgeInsets.all(16),
-        leading: Icon(icon, color: const Color(0xFF9B6DFF), size: 30),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
+        leading: Icon(
+          icon,
+          color: Theme.of(context).colorScheme.primary,
+          size: 30,
+        ),
+        title: Text(title, style: TextStyle(fontWeight: FontWeight.w700)),
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 6),
           child: Text(subtitle),
         ),
-        trailing: const Icon(Icons.chevron_right_rounded),
+        trailing: Icon(Icons.chevron_right_rounded),
       ),
     );
   }

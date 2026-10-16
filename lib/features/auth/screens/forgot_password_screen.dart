@@ -31,7 +31,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     try {
       await Supabase.instance.client.auth.resetPasswordForEmail(
         emailController.text.trim(),
-        // Add redirectTo after configuring your app's reset URL.
+        redirectTo: 'http://localhost:51902',
       );
 
       if (!mounted) return;
