@@ -19,10 +19,11 @@ class _SmartJobMatchingScreenState
   List<Map<String, dynamic>> jobs = [];
 
   @override
-  void initState() {
-    super.initState();
-    loadJobs();
-  }
+void initState() {
+  super.initState();
+  loadJobs();
+  loadProfileSkills();
+}
 
   @override
   void dispose() {
@@ -52,6 +53,33 @@ class _SmartJobMatchingScreenState
       });
     }
   }
+
+  
+Future<void> loadProfileSkills() async {
+  try {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null) return;
+
+    final profile = await Supabase.instance.client
+        .from('profiles')
+        .select('skills')
+        .eq('id', user.id)
+        .maybeSingle();
+
+    if (!mounted || profile == null) return;
+
+    final savedSkills = profile['skills'];
+
+    if (savedSkills is List && savedSkills.isNotEmpty) {
+      skillsController.text = savedSkills.join(', ');
+
+      setState(() {});
+    }
+  } catch (e) {
+    debugPrint('Could not load profile skills: $e');
+  }
+}
+
 
   List<String> get userSkills => skillsController.text
       .toLowerCase()
