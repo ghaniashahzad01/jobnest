@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../profile/job_seeker_profile_screen.dart';
 import '../skill_gap/skill_gap_analysis_screen.dart';
 import '../matching/smart_job_matching_screen.dart';
 import '../applications/application_tracker_screen.dart';
@@ -96,6 +97,19 @@ class JobSeekerDashboard extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (_) => const ApplicationTrackerScreen(),
+                    ),
+                  );
+                },
+              ),
+              _FeatureCard(
+                icon: Icons.person_outline_rounded,
+                title: 'My Profile',
+                subtitle: 'Manage your skills, experience and qualifications.',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const JobSeekerProfileScreen(),
                     ),
                   );
                 },
