@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../skill_gap/skill_gap_analysis_screen.dart';
 import '../matching/smart_job_matching_screen.dart';
 import '../applications/application_tracker_screen.dart';
 import '../jobs/browse_jobs_screen.dart';
@@ -76,6 +77,14 @@ class JobSeekerDashboard extends StatelessWidget {
                 icon: Icons.trending_up_rounded,
                 title: 'Skill Gap Analysis',
                 subtitle: 'Identify skills to improve.',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const SkillGapAnalysisScreen(),
+                    ),
+                  );
+                },
               ),
 
               _FeatureCard(
