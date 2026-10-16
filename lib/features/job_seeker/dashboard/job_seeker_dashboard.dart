@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../shared/settings/theme_settings_screen.dart';
 import '../profile/job_seeker_profile_screen.dart';
 import '../skill_gap/skill_gap_analysis_screen.dart';
 import '../matching/smart_job_matching_screen.dart';
@@ -26,6 +27,16 @@ class JobSeekerDashboard extends StatelessWidget {
 
               Navigator.of(context)
                   .pushNamedAndRemoveUntil('/', (route) => false);
+            },
+          ),
+          IconButton(
+            tooltip: 'Appearance',
+            icon: const Icon(Icons.palette_outlined),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ThemeSettingsScreen()),
+              );
             },
           ),
         ],

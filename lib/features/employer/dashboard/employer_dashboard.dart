@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../shared/settings/theme_settings_screen.dart';
 import '../applicants/manage_applicants_screen.dart';
 import '../company_profile/company_profile_screen.dart';
 import '../../auth/screens/welcome_screen.dart';
@@ -116,6 +117,16 @@ class _EmployerDashboardState extends State<EmployerDashboard> {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : const Icon(Icons.logout_rounded),
+          ),
+          IconButton(
+            tooltip: 'Appearance',
+            icon: const Icon(Icons.palette_outlined),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ThemeSettingsScreen()),
+              );
+            },
           ),
         ],
       ),

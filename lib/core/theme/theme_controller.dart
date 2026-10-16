@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeController extends ChangeNotifier {
+  static final ThemeController instance = ThemeController._();
   static const String _themeKey = 'jobnest_theme_mode';
 
   ThemeMode _themeMode = ThemeMode.dark;
 
   ThemeMode get themeMode => _themeMode;
 
-  ThemeController() {
-    _loadTheme();
-  }
+  ThemeController._() {
+  _loadTheme();
+}
 
   Future<void> _loadTheme() async {
     try {
